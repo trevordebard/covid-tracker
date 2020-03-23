@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { getData } from '../../api';
 export default function State({ state }) {
+  // TODO: Create custom hook for thi
   const [inError, setInerror] = useState(false);
-  const [totalCases, setTotalCases] = useState();
-  const [totalTests, setTotalTests] = useState();
   const [data, setData] = useState();
-  useEffect(async () => {
-    try {
-      let data = await getData(state);
-      setTotalCases(data.totalCases);
-      setTotalTests(data.totalTests);
-    } catch (err) {
-      setInerror(true);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let res = await getData(state);
+        setData(res);
+        setInerror(false);
+        setLoading(false);
+      } catch (err) {
+        setInerror(true);
+        setLoading(false);
+        console.log(err);
+      }
     }
+    fetchData();
   }, []);
   if (inError) {
     return <p>error...</p>;
   }
+  if (loading) {
+    return <p>loading..</p>;
+  }
   return (
     <div>
       <h1>{getStateName(state)}</h1>
-      <p>Total Cases: {totalCases}</p>
-      <p>Total Tests: {totalTests}</p>
+      <p>Total Cases: {data.totalCases}</p>
+      <p>Total Tests: {data.totalTests}</p>
     </div>
   );
 }
