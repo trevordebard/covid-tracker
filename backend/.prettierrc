@@ -9,5 +9,5 @@
   "ignoreStrings": true,
   "ignoreTemplateLiterals": true,
   "ignoreRegExpLiterals": true,
-  "trailingComma": "all"
+  "trailingComma": "es5"
 }

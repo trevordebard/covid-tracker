@@ -1,9 +1,18 @@
 import axios from 'axios';
+import puppeteer from 'puppeteer';
 import { getLatestEntry, addData } from './utils/db';
 
 export default class State {
-  constructor(state) {
+  constructor(state, url) {
     this.state = state;
+    this.url = url;
+  }
+
+  async setupPuppet(url) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(this.url, { waitUntil: 'networkidle0' });
+    return [page, browser];
   }
 
   async hasDataChanged({ totalCases, totalTests }) {
@@ -22,24 +31,9 @@ export default class State {
     return getLatestEntry(this.state);
   }
 
-  insertNewData({
-    totalCases,
-    stateLabPositive,
-    commercialLabPositive,
-    totalTests,
-    commercialLabTestTotal,
-    stateLabTestTotal,
-  }) {
+  insertNewData({ totalCases, totalTests, totalPositive, totalNegative }) {
     console.log('Inserting new data');
-    addData(
-      this.state,
-      totalCases,
-      stateLabPositive,
-      commercialLabPositive,
-      totalTests,
-      commercialLabTestTotal,
-      stateLabTestTotal,
-    );
+    addData(this.state, totalCases, totalTests, totalPositive, totalNegative);
   }
 
   static async getHTML(url) {

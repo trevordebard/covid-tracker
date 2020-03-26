@@ -3,8 +3,11 @@
 import cron from 'node-cron';
 import Arkansas from '../states/Arkansas';
 
-cron.schedule(`* * * * *`, async () => {
-  console.log('Cron running');
-  const AR = new Arkansas();
-  await AR.run();
-});
+export function scheduleCron() {
+  console.log('Scheduling cron...');
+  cron.schedule(`*/5 * * * *`, async () => {
+    console.log('Cron running');
+    const AR = new Arkansas();
+    await AR.run();
+  });
+}

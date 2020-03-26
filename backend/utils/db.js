@@ -11,23 +11,20 @@ client.connect();
 export async function addData(
   state,
   totalCases,
-  stateLabPositive,
-  commercialLabPositive,
   totalTests,
-  commercialLabTestTotal,
-  stateLabTestTotal,
+  totalPositive,
+  totalNegative
 ) {
+  console.log(state, totalCases, totalTests, totalPositive, totalNegative);
   const now = new Date();
-  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "stateLabPositive", "commercialLabPositive", "totalTests", "commercialLabTestTotal", "stateLabTestTotal") VALUES($1, $2, $3, $4, $5, $6, $7, $8)`;
+  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative") VALUES($1, $2, $3, $4, $5, $6)`;
   const values = [
     state,
     now,
     totalCases,
-    stateLabPositive,
-    commercialLabPositive,
     totalTests,
-    commercialLabTestTotal,
-    stateLabTestTotal,
+    totalPositive,
+    totalNegative,
   ];
   try {
     const res = await client.query(sql, values);
@@ -56,7 +53,7 @@ export async function getLatestEntry(state) {
     // TODO: handle no results returned. This could be valid if a new state is added
     if (res.rows.length > 1) {
       console.log(
-        `Error in getLatestEntry. Query returned: ${res.rows.length} rows. Expected one row.`,
+        `Error in getLatestEntry. Query returned: ${res.rows.length} rows. Expected one row.`
       );
     }
   } catch (err) {
