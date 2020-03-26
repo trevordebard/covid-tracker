@@ -35,6 +35,6 @@ app.get('/api/AR', async (req, res, next) => {
   res.json(await AR.getData());
 });
 
-app.listen(8888, () => {
+app.listen(2093, () => {
   console.log(`Example App running on port http://localhost:2093`);
 });
