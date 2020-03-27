@@ -17,9 +17,7 @@ app.use(
     origin(origin, callback) {
       // allow requests with no origin
       // (like mobile apps or curl requests)
-      console.log(origin)
       if (!origin) return callback(null, true);
-      console.log(origin)
       if (allowedOrigins.indexOf(origin) === -1) {
         const msg =
           'The CORS policy for this site does not ' +
@@ -35,6 +33,10 @@ app.get('/api/AR', (req, res, next) => {
   const AR = new Arkansas();
   AR.getData().then(r => res.json(r))
 });
+app.get('/test', (req, res, next) => {
+  const AR = new Arkansas();
+  AR.run()
+})
 
 app.listen(2093, () => {
   console.log(`Example App running on port http://localhost:2093`);
