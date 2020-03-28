@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getData } from '../../api';
+
 export default function State({ state }) {
   // TODO: Create custom hook for thi
   const [inError, setInerror] = useState(false);
@@ -8,7 +9,7 @@ export default function State({ state }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        let res = await getData(state);
+        const res = await getData(state);
         setData(res);
         setInerror(false);
         setLoading(false);
@@ -19,7 +20,7 @@ export default function State({ state }) {
       }
     }
     fetchData();
-  }, []);
+  }, [data, state]);
   if (inError) {
     return <p>error...</p>;
   }
@@ -38,7 +39,6 @@ export default function State({ state }) {
 function getStateName(state) {
   if (state === 'AR') {
     return 'Arkansas';
-  } else {
-    return 'State Unknown';
   }
+  return 'State Unknown';
 }
