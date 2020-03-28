@@ -1,8 +1,7 @@
 import './utils/config';
 import express from 'express';
-import Arkansas from './states/Arkansas';
 import cors from 'cors';
-import bodyparser from 'body-parser'
+import Arkansas from './states/Arkansas';
 
 import { scheduleCron } from './utils/cron';
 
@@ -11,7 +10,13 @@ if (process.env.RUN_CRON) {
   scheduleCron();
 }
 const app = express();
-const allowedOrigins = ['http://localhost:2043', 'http://localhost:1234', 'http://167.172.224.227:2093', 'http://167.172.224.227', 'http://167.172.224.227:1234']
+const allowedOrigins = [
+  'http://localhost:2043',
+  'http://localhost:1234',
+  'http://167.172.224.227:2093',
+  'http://167.172.224.227',
+  'http://167.172.224.227:1234',
+];
 app.use(
   cors({
     origin(origin, callback) {
@@ -19,9 +24,7 @@ app.use(
       // (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
-        const msg =
-          'The CORS policy for this site does not ' +
-          'allow access from the specified Origin.';
+        const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
         return callback(new Error(msg), false);
       }
       return callback(null, true);
@@ -31,12 +34,12 @@ app.use(
 
 app.get('/api/AR', (req, res, next) => {
   const AR = new Arkansas();
-  AR.getData().then(r => res.json(r))
+  AR.getData().then(r => res.json(r));
 });
 app.get('/test', (req, res, next) => {
   const AR = new Arkansas();
-  AR.run()
-})
+  AR.run();
+});
 
 app.listen(2093, () => {
   console.log(`Example App running on port http://localhost:2093`);

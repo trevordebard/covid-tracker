@@ -1,20 +1,15 @@
 module.exports = {
-  env: {
-    es6: true,
-    node: true,
-  },
-  extends: ['airbnb-base', 'prettier'],
-  plugins: ['prettier'],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: 'module',
-  },
+  extends: ['wesbos'],
   rules: {
-    'prettier/prettier': 'error',
     'no-console': 0,
+    'prettier/prettier': [
+      'error',
+      {
+        trailingComma: 'es5',
+        singleQuote: true,
+        printWidth: 120,
+        tabWidth: 2,
+      },
+    ],
   },
 };
