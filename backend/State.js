@@ -9,18 +9,19 @@ export default class State {
   }
 
   async setupPuppet(url) {
-    const browser = await puppeteer.launch({args: ['--no-sandbox']});
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.goto(this.url, { waitUntil: 'networkidle0' });
     return [page, browser];
   }
 
-  async hasDataChanged({ totalCases, totalTests }) {
+  async hasDataChanged({ totalCases, totalTests, deaths }) {
     console.log('Checking if data has changed.');
     const latestEntry = await getLatestEntry(this.state);
     if (
       totalCases === latestEntry.totalCases &&
-      totalTests === latestEntry.totalTests
+      totalTests === latestEntry.totalTests &&
+      deaths === latestEntry.deaths
     ) {
       return false;
     }
@@ -31,9 +32,9 @@ export default class State {
     return getLatestEntry(this.state);
   }
 
-  insertNewData({ totalCases, totalTests, totalPositive, totalNegative }) {
+  insertNewData({ totalCases, totalTests, totalPositive, totalNegative, deaths }) {
     console.log('Inserting new data');
-    addData(this.state, totalCases, totalTests, totalPositive, totalNegative);
+    addData(this.state, totalCases, totalTests, totalPositive, totalNegative, deaths);
   }
 
   static async getHTML(url) {

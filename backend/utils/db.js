@@ -13,11 +13,12 @@ export async function addData(
   totalCases,
   totalTests,
   totalPositive,
-  totalNegative
+  totalNegative,
+  deaths
 ) {
   console.log(state, totalCases, totalTests, totalPositive, totalNegative);
   const now = new Date();
-  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative") VALUES($1, $2, $3, $4, $5, $6)`;
+  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative", "deaths") VALUES($1, $2, $3, $4, $5, $6, $7)`;
   const values = [
     state,
     now,
@@ -25,6 +26,7 @@ export async function addData(
     totalTests,
     totalPositive,
     totalNegative,
+    deaths
   ];
   try {
     const res = await client.query(sql, values);

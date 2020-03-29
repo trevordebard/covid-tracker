@@ -39,6 +39,10 @@ export default function State({ state }) {
 function getStateName(state) {
   if (state === 'AR') {
     return 'Arkansas';
+  } else if (state === 'LA') {
+    return 'Louisiana'
+  } else if (state === 'TX') {
+    return 'Texas'
   }
   return 'State Unknown';
 }
