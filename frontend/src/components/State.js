@@ -20,7 +20,7 @@ export default function State({ state }) {
       }
     }
     fetchData();
-  }, [data, state]);
+  }, [state]);
   if (inError) {
     return <p>error...</p>;
   }
