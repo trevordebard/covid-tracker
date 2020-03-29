@@ -1,10 +1,11 @@
 /* eslint-disable no-use-before-define */
+/* eslint-disable class-methods-use-this */
 import State from '../State';
 
-export default class Louisiana extends State {
+export default class Texas extends State {
   constructor() {
-    const url = 'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776';
-    super('LA', url);
+    const url = 'https://txdshs.maps.arcgis.com/apps/opsdashboard/index.html#/ed483ecd702b4298ab01e8b9cafc8b83';
+    super('TX', url);
     this.data = null;
   }
 
@@ -18,7 +19,7 @@ export default class Louisiana extends State {
       if (data[i].innerHTML.includes('Cases Reported')) {
         if (!data.totalCases) {
           if (!res.totalCases) {
-            // Louisiana doesn't differentiate
+            // Texas doesn't differentiate
             res.totalCases = getStringAsNum(data[i - 1].innerHTML);
             res.totalPositive = getStringAsNum(data[i - 1].innerHTML);
           }
@@ -27,15 +28,21 @@ export default class Louisiana extends State {
         if (!res.deaths) {
           res.deaths = getStringAsNum(data[i - 1].innerHTML);
         }
-      } else if (data[i].innerHTML.includes('Hospitals')) {
+      }
+      // Texas doesn't report this (3/29)
+      else if (data[i].innerHTML.includes('Hospital')) {
         if (!res.deaths) {
           res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
         }
-      } else if (data[i].innerHTML.includes('by State Lab')) {
+      } else if (data[i].innerHTML.includes('Total Tests')) {
+        if (!res.totalTests) {
+          res.totalTests = getStringAsNum(data[i - 1].innerHTML);
+        }
+      } else if (data[i].innerHTML.includes('Public Lab')) {
         if (!stateTests) {
           stateTests = getStringAsNum(data[i - 1].innerHTML);
         }
-      } else if (data[i].innerHTML.includes('and Reported to State')) {
+      } else if (data[i].innerHTML.includes('Private Lab')) {
         if (!commercialTests) {
           commercialTests = getStringAsNum(data[i - 1].innerHTML);
         }
@@ -56,12 +63,15 @@ export default class Louisiana extends State {
   }
 
   async run() {
-    const [page, browser] = await this.setupPuppet();
-    await page
-      .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
+    let [page, browser] = [null, null];
+    try {
+      [page, browser] = await this.setupPuppet();
+      await page.waitForSelector('div > svg > g.responsive-text-label > svg > text', {
         timeout: 15000,
-      })
-      .catch(e => console.log('oops'));
+      });
+    } catch (err) {
+      throw Error('There was an error setting up puppet');
+    }
 
     this.data = await page.evaluate(this.scrapeData);
     browser.close();

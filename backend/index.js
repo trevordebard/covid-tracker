@@ -5,6 +5,7 @@ import Arkansas from './states/Arkansas';
 
 import { scheduleCron } from './utils/cron';
 import Louisiana from './states/Louisiana';
+import Texas from './states/Texas';
 
 // TODO: Entire app needs to handle promises and errors significantly better than it currently is
 if (process.env.RUN_CRON) {
@@ -42,10 +43,13 @@ app.get('/api/LA', (req, res, next) => {
   LA.getData().then(r => res.json(r));
 });
 app.get('/test', (req, res, next) => {
-  const AR = new Arkansas();
-  AR.run();
-  const LA = new Louisiana()
-  LA.run()
+  console.log('testing...');
+  // const AR = new Arkansas();
+  // AR.run();
+  // const LA = new Louisiana()
+  // LA.run()
+  const TX = new Texas();
+  TX.run();
 });
 
 app.listen(2093, () => {

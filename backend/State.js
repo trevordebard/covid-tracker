@@ -11,7 +11,7 @@ export default class State {
   async setupPuppet(url) {
     const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     const page = await browser.newPage();
-    await page.goto(this.url, { waitUntil: 'networkidle0' });
+    await page.goto(this.url, { waitUntil: 'networkidle0' }).catch(e => console.log('There was an isue going to URL'));
     return [page, browser];
   }
 
@@ -32,9 +32,9 @@ export default class State {
     return getLatestEntry(this.state);
   }
 
-  insertNewData({ totalCases, totalTests, totalPositive, totalNegative, deaths }) {
+  insertNewData({ totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations }) {
     console.log('Inserting new data');
-    addData(this.state, totalCases, totalTests, totalPositive, totalNegative, deaths);
+    addData(this.state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations);
   }
 
   static async getHTML(url) {

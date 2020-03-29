@@ -3,6 +3,7 @@
 import cron from 'node-cron';
 import Arkansas from '../states/Arkansas';
 import Louisiana from '../states/Louisiana';
+import Texas from '../states/Texas';
 
 export function scheduleCron() {
   console.log('Scheduling cron...');
@@ -10,7 +11,9 @@ export function scheduleCron() {
     console.log('Cron running');
     const AR = new Arkansas();
     const LA = new Louisiana();
+    const TX = new Texas();
     await AR.run();
     await LA.run();
+    await TX.run();
   });
 }
