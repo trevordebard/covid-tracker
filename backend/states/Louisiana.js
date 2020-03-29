@@ -2,74 +2,76 @@
 import State from '../State';
 
 export default class Louisiana extends State {
-    constructor() {
-        let url =
-            'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776';
-        super('LA', url);
-        this.data = null;
-    }
+  constructor() {
+    const url = 'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776';
+    super('LA', url);
+    this.data = null;
+  }
 
-    scrapeData() {
-        let res = {};
-        let data = document.querySelectorAll('div > svg > g.responsive-text-label > svg > text');
-        let i = 0;
-        let stateTests = null;
-        let commercialTests = null;
-        while (i < data.length) {
-            if (data[i].innerHTML.includes('Cases Reported')) {
-                if (!data.totalCases) {
-                    if (!res.totalCases) {
-                        res.totalCases = getStringAsNum(data[i - 1].innerHTML);
-                    }
-                }
-            } else if (data[i].innerHTML.includes('Deaths')) {
-                if (!res.deaths) {
-                    res.deaths = getStringAsNum(data[i - 1].innerHTML);
-                }
-            } else if (data[i].innerHTML.includes('Hospitals')) {
-                if (!res.deaths) {
-                    res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
-                }
-            }
-            else if (data[i].innerHTML.includes('by State Lab')) {
-                if (!stateTests) {
-                    stateTests = getStringAsNum(data[i - 1].innerHTML);
-                }
-            } else if (data[i].innerHTML.includes('and Reported to State')) {
-                if (!commercialTests) {
-                    commercialTests = getStringAsNum(data[i - 1].innerHTML);
-                }
-            }
-            i++;
+  scrapeData() {
+    const res = {};
+    const data = document.querySelectorAll('div > svg > g.responsive-text-label > svg > text');
+    let i = 0;
+    let stateTests = null;
+    let commercialTests = null;
+    while (i < data.length) {
+      if (data[i].innerHTML.includes('Cases Reported')) {
+        if (!data.totalCases) {
+          if (!res.totalCases) {
+            // Louisiana doesn't differentiate
+            res.totalCases = getStringAsNum(data[i - 1].innerHTML);
+            res.totalPositive = getStringAsNum(data[i - 1].innerHTML);
+          }
         }
-        res.totalTests = commercialTests + stateTests
-        res.totalNegative = res.totalTests - res.totalPositive
-
-        // This is running in headless browser, so function needs
-        // to be defined here
-        function getStringAsNum(num) {
-            //Remove commas
-            let res = num.replace(',', '');
-            return parseInt(res, 10);
+      } else if (data[i].innerHTML.includes('Deaths')) {
+        if (!res.deaths) {
+          res.deaths = getStringAsNum(data[i - 1].innerHTML);
         }
-        return res;
-    }
-
-    async run() {
-        let [page, browser] = await this.setupPuppet();
-        await page
-            .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
-                timeout: 15000,
-            })
-            .catch(e => console.log('oops'));
-
-        this.data = await page.evaluate(this.scrapeData);
-        browser.close();
-        let blnDataHasChanged = await super.hasDataChanged(this.data);
-        if (blnDataHasChanged) {
-            await super.insertNewData(this.data);
-        } else {
-            console.log('Data has not updated');
+      } else if (data[i].innerHTML.includes('Hospitals')) {
+        if (!res.deaths) {
+          res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
         }
+      } else if (data[i].innerHTML.includes('by State Lab')) {
+        if (!stateTests) {
+          stateTests = getStringAsNum(data[i - 1].innerHTML);
+        }
+      } else if (data[i].innerHTML.includes('and Reported to State')) {
+        if (!commercialTests) {
+          commercialTests = getStringAsNum(data[i - 1].innerHTML);
+        }
+      }
+      i += 1;
     }
+    res.totalTests = commercialTests + stateTests;
+    res.totalNegative = res.totalTests - res.totalPositive;
+
+    // This is running in headless browser, so function needs
+    // to be defined here
+    function getStringAsNum(num) {
+      // Remove commas
+      const val = num.replace(',', '');
+      return parseInt(val, 10);
+    }
+    return res;
+  }
+
+  async run() {
+    const [page, browser] = await this.setupPuppet();
+    await page
+      .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
+        timeout: 15000,
+      })
+      .catch(e => console.log('oops'));
+
+    this.data = await page.evaluate(this.scrapeData);
+    console.log(`check negative:`);
+    console.log(this.data);
+    browser.close();
+    const blnDataHasChanged = await super.hasDataChanged(this.data);
+    if (blnDataHasChanged) {
+      await super.insertNewData(this.data);
+    } else {
+      console.log('Data has not updated');
+    }
+  }
 }
