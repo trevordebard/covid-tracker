@@ -54,22 +54,4 @@ export default class Louisiana extends State {
     }
     return res;
   }
-
-  async run() {
-    const [page, browser] = await this.setupPuppet();
-    await page
-      .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
-        timeout: 15000,
-      })
-      .catch(e => console.log('oops'));
-
-    this.data = await page.evaluate(this.scrapeData);
-    browser.close();
-    const blnDataHasChanged = await super.hasDataChanged(this.data);
-    if (blnDataHasChanged) {
-      await super.insertNewData(this.data);
-    } else {
-      console.log(`${this.state} data has not updated`);
-    }
-  }
 }

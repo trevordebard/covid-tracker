@@ -5,7 +5,6 @@ export default class Arkansas extends State {
   constructor() {
     const url = 'https://adem.maps.arcgis.com/apps/opsdashboard/index.html#/f533ac8a8b6040e5896b05b47b17a647';
     super('AR', url);
-    this.data = null;
   }
 
   scrapeData() {
@@ -62,23 +61,5 @@ export default class Arkansas extends State {
       return parseInt(res, 10);
     }
     return res;
-  }
-
-  async run() {
-    const [page, browser] = await this.setupPuppet();
-    await page
-      .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
-        timeout: 15000,
-      })
-      .catch(e => console.log('oops'));
-
-    this.data = await page.evaluate(this.scrapeData);
-    browser.close();
-    const blnDataHasChanged = await super.hasDataChanged(this.data);
-    if (blnDataHasChanged) {
-      super.insertNewData(this.data);
-    } else {
-      console.log(`${this.state} data has not updated`);
-    }
   }
 }

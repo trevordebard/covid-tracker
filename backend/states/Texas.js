@@ -61,27 +61,4 @@ export default class Texas extends State {
     }
     return res;
   }
-
-  async run() {
-    let [page, browser] = [null, null];
-    try {
-      [page, browser] = await this.setupPuppet();
-      await page.waitForSelector('div > svg > g.responsive-text-label > svg > text', {
-        timeout: 15000,
-      });
-    } catch (err) {
-      throw Error('There was an error setting up puppet');
-    }
-
-    this.data = await page.evaluate(this.scrapeData);
-    browser.close();
-    console.log('texas')
-    console.log(this.data)
-    const blnDataHasChanged = await super.hasDataChanged(this.data);
-    if (blnDataHasChanged) {
-      await super.insertNewData(this.data);
-    } else {
-      console.log(`${this.state} data has not updated`);
-    }
-  }
 }

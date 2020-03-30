@@ -43,17 +43,17 @@ app.get('/api/LA', (req, res, next) => {
   LA.getData().then(r => res.json(r));
 });
 app.get('/api/TX', (req, res, next) => {
-  const TX = new Texas()
-  TX.getData().then(r => res.json(r))
+  const TX = new Texas();
+  TX.getData().then(r => res.json(r));
 });
-app.get('/test', (req, res, next) => {
+app.get('/test', async (req, res, next) => {
   console.log('testing...');
   const AR = new Arkansas();
-  AR.run();
-  const LA = new Louisiana()
-  LA.run()
+  await AR.run();
+  const LA = new Louisiana();
+  await LA.run();
   const TX = new Texas();
-  TX.run();
+  await TX.run();
 });
 
 app.listen(2093, () => {
