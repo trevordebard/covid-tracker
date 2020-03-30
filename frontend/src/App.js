@@ -7,6 +7,7 @@ export default () => {
     <>
       <State state="AR"></State>
       <State state="LA"></State>
+      <State state="TX"></State>
     </>
   );
 };

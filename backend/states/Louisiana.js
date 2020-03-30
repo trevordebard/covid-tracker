@@ -28,7 +28,7 @@ export default class Louisiana extends State {
           res.deaths = getStringAsNum(data[i - 1].innerHTML);
         }
       } else if (data[i].innerHTML.includes('Hospitals')) {
-        if (!res.deaths) {
+        if (!res.hospitalizations) {
           res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
         }
       } else if (data[i].innerHTML.includes('by State Lab')) {

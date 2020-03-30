@@ -15,13 +15,16 @@ export default class State {
     return [page, browser];
   }
 
-  async hasDataChanged({ totalCases, totalTests, deaths }) {
+  async hasDataChanged({ totalCases, totalTests, deaths, hospitalizations }) {
     console.log('Checking if data has changed.');
     const latestEntry = await getLatestEntry(this.state);
+
+    //hospitalizations can be undefined in latest entry
     if (
       totalCases === latestEntry.totalCases &&
       totalTests === latestEntry.totalTests &&
-      deaths === latestEntry.deaths
+      deaths === latestEntry.deaths &&
+      hospitalizations == latestEntry.hospitalizations
     ) {
       return false;
     }

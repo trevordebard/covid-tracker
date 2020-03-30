@@ -31,7 +31,7 @@ export default class Texas extends State {
       }
       // Texas doesn't report this (3/29)
       else if (data[i].innerHTML.includes('Hospital')) {
-        if (!res.deaths) {
+        if (!res.hospitalizations) {
           res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
         }
       } else if (data[i].innerHTML.includes('Total Tests')) {
@@ -75,6 +75,8 @@ export default class Texas extends State {
 
     this.data = await page.evaluate(this.scrapeData);
     browser.close();
+    console.log('texas')
+    console.log(this.data)
     const blnDataHasChanged = await super.hasDataChanged(this.data);
     if (blnDataHasChanged) {
       await super.insertNewData(this.data);

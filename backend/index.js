@@ -42,12 +42,16 @@ app.get('/api/LA', (req, res, next) => {
   const LA = new Louisiana();
   LA.getData().then(r => res.json(r));
 });
+app.get('/api/TX', (req, res, next) => {
+  const TX = new Texas()
+  TX.getData().then(r => res.json(r))
+});
 app.get('/test', (req, res, next) => {
   console.log('testing...');
-  // const AR = new Arkansas();
-  // AR.run();
-  // const LA = new Louisiana()
-  // LA.run()
+  const AR = new Arkansas();
+  AR.run();
+  const LA = new Louisiana()
+  LA.run()
   const TX = new Texas();
   TX.run();
 });
