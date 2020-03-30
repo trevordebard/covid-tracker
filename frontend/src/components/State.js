@@ -1,37 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { getData } from '../../api';
+import React from 'react';
+import useFetchState from '../hooks/useFetchState';
 
 export default function State({ state }) {
-  // TODO: Create custom hook for thi
-  const [inError, setInerror] = useState(false);
-  const [data, setData] = useState();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await getData(state);
-        setData(res);
-        setInerror(false);
-        setLoading(false);
-      } catch (err) {
-        setInerror(true);
-        setLoading(false);
-        console.log(err);
-      }
-    }
-    fetchData();
-  }, [state]);
+  const res = useFetchState(state);
+  const { data, inError, loading } = res;
   if (inError) {
     return <p>error...</p>;
   }
   if (loading) {
     return <p>loading..</p>;
   }
+  const created = new Date(data.created);
   return (
     <div>
       <h1>{getStateName(state)}</h1>
-      <p>Total Cases: {data.totalCases}</p>
-      <p>Total Tests: {data.totalTests}</p>
+      <p>Total Cases: {data.totalCases.toLocaleString()}</p>
+      <p>Total Tests: {data.totalTests.toLocaleString()}</p>
+      {data.hospitalizations && <p>Hospitalizations: {data.hospitalizations.toLocaleString()}</p>}
+      <p>Updated: {created.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST</p>
     </div>
   );
 }
@@ -39,10 +25,12 @@ export default function State({ state }) {
 function getStateName(state) {
   if (state === 'AR') {
     return 'Arkansas';
-  } else if (state === 'LA') {
-    return 'Louisiana'
-  } else if (state === 'TX') {
-    return 'Texas'
+  }
+  if (state === 'LA') {
+    return 'Louisiana';
+  }
+  if (state === 'TX') {
+    return 'Texas';
   }
   return 'State Unknown';
 }
