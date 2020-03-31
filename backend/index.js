@@ -48,12 +48,24 @@ app.get('/api/TX', (req, res, next) => {
 });
 app.get('/test', async (req, res, next) => {
   console.log('testing...');
-  const AR = new Arkansas();
-  await AR.run();
-  const LA = new Louisiana();
-  await LA.run();
-  const TX = new Texas();
-  await TX.run();
+  console.log(req);
+  if (req.query.state === 'AR') {
+    const AR = new Arkansas();
+    await AR.run();
+  } else if (req.query.state === 'LA') {
+    const LA = new Louisiana();
+    await LA.run();
+  } else if (req.query.state === 'TX') {
+    const TX = new Texas();
+    await TX.run();
+  } else {
+    const AR = new Arkansas();
+    await AR.run();
+    const LA = new Louisiana();
+    await LA.run();
+    const TX = new Texas();
+    await TX.run();
+  }
 });
 
 app.listen(2093, () => {

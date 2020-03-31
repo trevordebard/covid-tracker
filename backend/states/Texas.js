@@ -28,6 +28,10 @@ export default class Texas extends State {
         if (!res.deaths) {
           res.deaths = getStringAsNum(data[i - 1].innerHTML);
         }
+      } else if (data[i].innerHTML.includes('Fatal')) {
+        if (!res.deaths) {
+          res.deaths = getStringAsNum(data[i - 1].innerHTML);
+        }
       }
       // Texas doesn't report this (3/29)
       else if (data[i].innerHTML.includes('Hospital')) {

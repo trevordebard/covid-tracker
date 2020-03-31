@@ -22,14 +22,17 @@ export default class State {
   }
 
   async run() {
-    const [page, browser] = await this.setupPuppet();
-    await page
-      .waitForSelector('div > svg > g.responsive-text-label > svg > text', {
+    let [page, browser] = [null, null];
+    try {
+      [page, browser] = await this.setupPuppet();
+      await page.waitForSelector('div > svg > g.responsive-text-label > svg > text', {
         timeout: 15000,
-      })
-      .catch(e => console.log('Unable to wait for selector'));
-    this.data = await page.evaluate(this.scrapeData);
-    browser.close();
+      });
+      this.data = await page.evaluate(this.scrapeData);
+      browser.close();
+    } catch (e) {
+      console.log('There was an error seting up puppet or evaluating the page in State.js');
+    }
     const blnDataHasChanged = await this.hasDataChanged(this.data);
     if (blnDataHasChanged) {
       this.insertNewData(this.data);
@@ -42,11 +45,11 @@ export default class State {
     console.log('Checking if data has changed.');
     const latestEntry = await getLatestEntry(this.state);
 
-    // hospitalizations can be undefined in latest entry
+    // intentionally using == because we want null and undefined comparisons to return true
     if (
-      totalCases === latestEntry.totalCases &&
-      totalTests === latestEntry.totalTests &&
-      deaths === latestEntry.deaths &&
+      totalCases == latestEntry.totalCases &&
+      totalTests == latestEntry.totalTests &&
+      deaths == latestEntry.deaths &&
       hospitalizations == latestEntry.hospitalizations
     ) {
       return false;
