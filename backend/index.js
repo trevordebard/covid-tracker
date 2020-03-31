@@ -48,7 +48,6 @@ app.get('/api/TX', (req, res, next) => {
 });
 app.get('/test', async (req, res, next) => {
   console.log('testing...');
-  console.log(req);
   if (req.query.state === 'AR') {
     const AR = new Arkansas();
     await AR.run();

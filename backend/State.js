@@ -1,6 +1,6 @@
 import axios from 'axios';
 import puppeteer from 'puppeteer';
-import { getLatestEntry, addData } from './utils/db';
+import { getLatestEntry, addData, updateLastChecked } from './utils/db';
 
 export default class State {
   constructor(state, url) {
@@ -9,7 +9,7 @@ export default class State {
     this.data = null;
   }
 
-  async setupPuppet(url) {
+  async setupPuppet() {
     const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     const page = await browser.newPage();
     try {
@@ -37,6 +37,7 @@ export default class State {
     if (blnDataHasChanged) {
       this.insertNewData(this.data);
     } else {
+      updateLastChecked(this.state);
       console.log(`${this.state} data has not updated`);
     }
   }

@@ -11,8 +11,8 @@ client.connect();
 export async function addData(state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations) {
   console.log(state, totalCases, totalTests, totalPositive, totalNegative);
   const now = new Date();
-  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative", "deaths", "hospitalizations") VALUES($1, $2, $3, $4, $5, $6, $7, $8)`;
-  const values = [state, now, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations];
+  const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative", "deaths", "hospitalizations", "lastChecked") VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+  const values = [state, now, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations, now];
   try {
     const res = await client.query(sql, values);
     console.log('Successfully added new cases to the database');
@@ -47,4 +47,16 @@ export async function getLatestEntry(state) {
     return err;
   }
   return res.rows[0];
+}
+
+export async function updateLastChecked(state) {
+  console.log(`Updating lastChecked for ${state}`);
+  const now = new Date();
+  const { id } = await getLatestEntry(state);
+  const sql = `update cases set "lastChecked"=$1 where id=$2`;
+  try {
+    client.query(sql, [now, id]);
+  } catch (e) {
+    console.log(`Unable to update lastChecked in cases for id: ${id} with value ${now}`);
+  }
 }
