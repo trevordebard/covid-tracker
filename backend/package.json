@@ -1,5 +1,5 @@
 {
-  "name": "covid-tracker",
+  "name": "covid-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,6 +7,7 @@
     "dev": "nodemon -r esm index.js",
     "dev-cron": "RUN_CRON=true nodemon -r esm index.js",
     "cron": "RUN_CRON=true node -r esm index.js",
+    "production": "NODE_ENV=production RUN_CRON=true node -r esm index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

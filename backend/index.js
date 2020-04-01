@@ -1,8 +1,8 @@
 import './utils/config';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import Arkansas from './states/Arkansas';
-
 import { scheduleCron } from './utils/cron';
 import Louisiana from './states/Louisiana';
 import Texas from './states/Texas';
@@ -12,12 +12,14 @@ if (process.env.RUN_CRON) {
   scheduleCron();
 }
 const app = express();
+app.use(express.static(path.join(__dirname, '../public')));
 const allowedOrigins = [
   'http://localhost:2043',
   'http://localhost:1234',
   'http://167.172.224.227:2093',
-  'http://167.172.224.227',
   'http://167.172.224.227:1234',
+  'https://ronatrace.xyz',
+  'https://www.ronatrace.xyz',
 ];
 app.use(
   cors({
@@ -46,27 +48,32 @@ app.get('/api/TX', (req, res, next) => {
   const TX = new Texas();
   TX.getData().then(r => res.json(r));
 });
-app.get('/test', async (req, res, next) => {
-  console.log('testing...');
-  if (req.query.state === 'AR') {
-    const AR = new Arkansas();
-    await AR.run();
-  } else if (req.query.state === 'LA') {
-    const LA = new Louisiana();
-    await LA.run();
-  } else if (req.query.state === 'TX') {
-    const TX = new Texas();
-    await TX.run();
-  } else {
-    const AR = new Arkansas();
-    await AR.run();
-    const LA = new Louisiana();
-    await LA.run();
-    const TX = new Texas();
-    await TX.run();
-  }
-});
-
-app.listen(2093, () => {
-  console.log(`Example App running on port http://localhost:2093`);
-});
+if (process.env.NODE_ENV === 'production') {
+  app.listen(process.env.PROD_PORT, () => {
+    console.log(`Example App running on port ${process.env.PROD_PORT}`);
+  });
+} else {
+  app.get('/test', async (req, res, next) => {
+    console.log('testing...');
+    if (req.query.state === 'AR') {
+      const AR = new Arkansas();
+      await AR.run();
+    } else if (req.query.state === 'LA') {
+      const LA = new Louisiana();
+      await LA.run();
+    } else if (req.query.state === 'TX') {
+      const TX = new Texas();
+      await TX.run();
+    } else {
+      const AR = new Arkansas();
+      await AR.run();
+      const LA = new Louisiana();
+      await LA.run();
+      const TX = new Texas();
+      await TX.run();
+    }
+  });
+  app.listen(process.env.DEV_PORT, () => {
+    console.log(`Example App running on port ${process.env.DEV_PORT}`);
+  });
+}
