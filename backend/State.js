@@ -10,14 +10,20 @@ export default class State {
   }
 
   async setupPuppet() {
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-    const page = await browser.newPage();
+    let browser = null;
+    let page = null;
     try {
+      browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+      page = await browser.newPage();
       await page.goto(this.url, { waitUntil: 'networkidle0' });
       return [page, browser];
     } catch (err) {
-      console.log('There was an error going to URL');
+      console.error('There was an issue in setupPuppet');
       throw err;
+    } finally {
+      if (browser) {
+        browser.close();
+      }
     }
   }
 
@@ -29,14 +35,25 @@ export default class State {
         timeout: 15000,
       });
       this.data = await page.evaluate(this.scrapeData);
-      browser.close();
     } catch (e) {
       console.log('There was an error seting up puppet or evaluating the page in State.js');
+      throw e;
+    } finally {
+      if (browser) {
+        browser.close();
+      }
     }
-    const blnDataHasChanged = await this.hasDataChanged(this.data);
+    let blnDataHasChanged = null;
+    if (this.data) {
+      try {
+        blnDataHasChanged = await this.hasDataChanged(this.data);
+      } catch (e) {
+        throw e;
+      }
+    }
     if (blnDataHasChanged) {
       this.insertNewData(this.data);
-    } else {
+    } else if (blnDataHasChanged === false) {
       updateLastChecked(this.state);
       console.log(`${this.state} data has not updated`);
     }
@@ -44,6 +61,9 @@ export default class State {
 
   async hasDataChanged({ totalCases, totalTests, deaths, hospitalizations }) {
     console.log('Checking if data has changed.');
+    if (!totalCases || !totalTests || !deaths || !hospitalizations) {
+      throw Error('Missing argument in Stae.js hasDataChanged');
+    }
     const latestEntry = await getLatestEntry(this.state);
 
     // intentionally using == because we want null and undefined comparisons to return true
