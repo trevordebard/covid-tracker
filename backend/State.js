@@ -19,11 +19,11 @@ export default class State {
       return [page, browser];
     } catch (err) {
       console.error('There was an issue in setupPuppet');
-      throw err;
-    } finally {
       if (browser) {
+        console.log('closing browser1');
         browser.close();
       }
+      throw err;
     }
   }
 
@@ -40,6 +40,7 @@ export default class State {
       throw e;
     } finally {
       if (browser) {
+        console.log('closing browser2');
         browser.close();
       }
     }
@@ -61,9 +62,6 @@ export default class State {
 
   async hasDataChanged({ totalCases, totalTests, deaths, hospitalizations }) {
     console.log('Checking if data has changed.');
-    if (!totalCases || !totalTests || !deaths || !hospitalizations) {
-      throw Error('Missing argument in Stae.js hasDataChanged');
-    }
     const latestEntry = await getLatestEntry(this.state);
 
     // intentionally using == because we want null and undefined comparisons to return true

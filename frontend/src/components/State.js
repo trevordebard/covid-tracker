@@ -11,6 +11,7 @@ export default function State({ state }) {
     return <p>loading..</p>;
   }
   const created = new Date(data.created);
+  const lastChecked = new Date(data.lastChecked);
   return (
     <div>
       <h1>{getStateName(state)}</h1>
@@ -18,6 +19,7 @@ export default function State({ state }) {
       <p>Total Tests: {data.totalTests.toLocaleString()}</p>
       {data.hospitalizations && <p>Hospitalizations: {data.hospitalizations.toLocaleString()}</p>}
       <p>Updated: {created.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST</p>
+      <p>Last Checked: {lastChecked.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST</p>
     </div>
   );
 }
