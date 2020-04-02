@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "build": "parcel build index.html",
+    "deploy": "rm -r ../public; cp -r dist ../public"
   },
   "license": "MIT",
   "dependencies": {
