@@ -17,6 +17,7 @@ export default function State({ state }) {
       <h1>{getStateName(state)}</h1>
       <p>Total Cases: {data.totalCases.toLocaleString()}</p>
       <p>Total Tests: {data.totalTests.toLocaleString()}</p>
+      {data.deaths && <p>Deaths: {data.deaths}</p>}
       {data.hospitalizations && <p>Hospitalizations: {data.hospitalizations.toLocaleString()}</p>}
       <p>Updated: {created.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST</p>
       <p>Last Checked: {lastChecked.toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST</p>

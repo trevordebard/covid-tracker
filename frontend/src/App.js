@@ -1,12 +1,18 @@
 import React from 'react';
 import State from './components/State';
+import Layout from './Layout';
 
 export default () => (
   <>
-    <State state="AR"></State>
-    <State state="LA"></State>
-    <State state="TX"></State>
-    <a href="https://github.com/trevordebard/covid-tracker" style={{ marginTop: '10px' }}>
+    <Layout>
+      <State state="AR"></State>
+      <State state="LA"></State>
+      <State state="TX"></State>
+    </Layout>
+    <a
+      href="https://github.com/trevordebard/covid-tracker"
+      style={{ marginBottom: '10px', position: 'absolute', bottom: 0, textAlign: 'center', width: '100%' }}
+    >
       View the Code
     </a>
   </>
