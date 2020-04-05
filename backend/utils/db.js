@@ -23,20 +23,27 @@ export async function addData(state, totalCases, totalTests, totalPositive, tota
 }
 
 // Get the latest case data for a state
-export async function getLatestEntry(state) {
+export async function getLatestEntry(state, date) {
   let res;
   const sql = `
         select *
         from (
             select max(created) as recent, state
             from cases
+            ${date ? "where cast(((created AT TIME ZONE 'UTC') AT TIME ZONE 'CST') As date) = $2" : ""}
             group by state
         ) r inner join cases c
         on r.recent=c.created and r.state = c.state
         where c.state=$1
     `;
   try {
-    res = await client.query(sql, [state]);
+    if(date) {
+      res = await client.query(sql, [state, date]);
+      console.log(res.rows[0])
+      console.log(new Date(res.rows[0].recent + 'UTC').toLocaleString())
+    } else {
+      res = await client.query(sql, [state]);
+    }
     // TODO: handle no results returned. This could be valid if a new state is added
     if (res.rows.length > 1) {
       console.log(`Error in getLatestEntry. Query returned: ${res.rows.length} rows. Expected one row.`);
@@ -44,7 +51,7 @@ export async function getLatestEntry(state) {
   } catch (err) {
     console.log('Unknown in getLatestData');
     console.log(err.stack);
-    return err;
+    throw err;
   }
   return res.rows[0];
 }
@@ -59,4 +66,23 @@ export async function updateLastChecked(state) {
   } catch (e) {
     console.log(`Unable to update lastChecked in cases for id: ${id} with value ${now}`);
   }
+}
+
+export function getHistory(state) {
+  console.log(`Getting ${state}'s history...`)
+  let response = null;
+  const sql = `
+    SELECT r.state, r.recent, c."totalPositive", c."totalNegative", c."totalCases", c.deaths, c."totalTests", c.hospitalizations
+    FROM
+      (SELECT state,
+              max(created) AS recent
+      FROM cases
+      WHERE state = $1
+      GROUP BY state,
+                CAST(((created AT TIME ZONE 'UTC') AT TIME ZONE 'AMERICA/CHICAGO') AS date)) r
+    INNER JOIN cases c ON r.recent = c.created
+    AND r.state = c.state
+    ORDER BY c.created DESC;
+  `
+  return client.query(sql, [state])
 }

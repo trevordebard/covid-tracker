@@ -49,7 +49,7 @@ export default class State {
       try {
         blnDataHasChanged = await this.hasDataChanged(this.data);
       } catch (e) {
-        throw e;
+        console.log('Unable to determine if data has changed')
       }
     }
     if (blnDataHasChanged) {

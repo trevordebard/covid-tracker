@@ -6,6 +6,7 @@ import Arkansas from './states/Arkansas';
 import { scheduleCron } from './utils/cron';
 import Louisiana from './states/Louisiana';
 import Texas from './states/Texas';
+import {getLatestEntry, getHistory} from './utils/db'
 
 // TODO: Entire app needs to handle promises and errors significantly better than it currently is
 if (process.env.RUN_CRON) {
@@ -35,7 +36,14 @@ app.use(
     },
   })
 );
-
+app.get('/api/history', async (req, res) => {
+  const data = await getHistory(req.query.state)
+  if(data.rows.length > 0) {
+    res.json(data.rows)
+  } else {
+    res.status(500).send("Error getting history")
+  }  
+})
 app.get('/api/AR', (req, res, next) => {
   const AR = new Arkansas();
   AR.getData().then(r => res.json(r));
@@ -48,6 +56,7 @@ app.get('/api/TX', (req, res, next) => {
   const TX = new Texas();
   TX.getData().then(r => res.json(r));
 });
+
 if (process.env.NODE_ENV === 'production') {
   app.listen(process.env.PROD_PORT, () => {
     console.log(`Example App running on port ${process.env.PROD_PORT}`);
@@ -73,6 +82,13 @@ if (process.env.NODE_ENV === 'production') {
       await TX.run();
     }
   });
+  app.get('/latest', (req,res) => {
+    getLatestEntry(req.query.state, req.query.date)
+    .then(data => {
+      res.json(data)
+    })
+  })
+  
   app.listen(process.env.DEV_PORT, () => {
     console.log(`Example App running on port ${process.env.DEV_PORT}`);
   });
