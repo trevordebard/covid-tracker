@@ -7,10 +7,11 @@ const client = new Client({
 });
 client.connect();
 
-// // Add new case to database
+// Add new case to database
 export async function addData(state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations) {
   console.log(state, totalCases, totalTests, totalPositive, totalNegative);
   const now = new Date();
+  console.log(now);
   const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative", "deaths", "hospitalizations", "lastChecked") VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
   const values = [state, now, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations, now];
   try {
@@ -30,30 +31,28 @@ export async function getLatestEntry(state, date) {
         from (
             select max(created) as recent, state
             from cases
-            ${date ? "where cast(((created AT TIME ZONE 'UTC') AT TIME ZONE 'CST') As date) = $2" : ""}
+            ${date ? 'where cast(created As date) = $2' : ''}
             group by state
         ) r inner join cases c
         on r.recent=c.created and r.state = c.state
         where c.state=$1
     `;
   try {
-    if(date) {
+    if (date) {
       res = await client.query(sql, [state, date]);
-      console.log(res.rows[0])
-      console.log(new Date(res.rows[0].recent + 'UTC').toLocaleString())
     } else {
       res = await client.query(sql, [state]);
     }
     // TODO: handle no results returned. This could be valid if a new state is added
     if (res.rows.length > 1) {
       console.log(`Error in getLatestEntry. Query returned: ${res.rows.length} rows. Expected one row.`);
+    } else {
+      return res.rows[0];
     }
   } catch (err) {
     console.log('Unknown in getLatestData');
-    console.log(err.stack);
-    throw err;
+    console.log(err);
   }
-  return res.rows[0];
 }
 
 export async function updateLastChecked(state) {
@@ -69,8 +68,7 @@ export async function updateLastChecked(state) {
 }
 
 export function getHistory(state) {
-  console.log(`Getting ${state}'s history...`)
-  let response = null;
+  console.log(`Getting ${state}'s history...`);
   const sql = `
     SELECT r.state, r.recent, c."totalPositive", c."totalNegative", c."totalCases", c.deaths, c."totalTests", c.hospitalizations
     FROM
@@ -79,10 +77,11 @@ export function getHistory(state) {
       FROM cases
       WHERE state = $1
       GROUP BY state,
-                CAST(((created AT TIME ZONE 'UTC') AT TIME ZONE 'AMERICA/CHICAGO') AS date)) r
+                CAST(created AS date)) r
     INNER JOIN cases c ON r.recent = c.created
     AND r.state = c.state
     ORDER BY c.created DESC;
-  `
-  return client.query(sql, [state])
+  `;
+
+  return client.query(sql, [state]);
 }
