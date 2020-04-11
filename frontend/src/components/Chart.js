@@ -11,7 +11,7 @@ export default function Chart({ state }) {
           <LineChart data={history}>
             <Label position="center" value="Total Cases" />
             <XAxis dataKey="recent" tickFormatter={el => el.toLocaleString()} />
-            <YAxis width={50} />
+            <YAxis width={55} />
             <Legend />
             <Tooltip />
             <Line type="monotone" dataKey="totalCases" stroke="#8884d8" name="Total Cases" />
@@ -20,7 +20,7 @@ export default function Chart({ state }) {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={history}>
             <XAxis dataKey="recent" />
-            <YAxis width={50} />
+            <YAxis width={55} />
             <Legend />
             <Tooltip />
             <Line type="monotone" dataKey="totalTests" stroke="#82ca9d" name="Total Tests" />
