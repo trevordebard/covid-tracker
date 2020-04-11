@@ -19,6 +19,7 @@ const allowedOrigins = [
   'http://localhost:1234',
   'http://167.172.224.227:2093',
   'http://167.172.224.227:1234',
+  'http://172.16.245.35:1234',
   'https://ronatrace.xyz',
   'https://www.ronatrace.xyz',
 ];

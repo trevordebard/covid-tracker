@@ -9,11 +9,8 @@ export default () => (
       <State state="LA"></State>
       <State state="TX"></State>
     </Layout>
-    <a
-      href="https://github.com/trevordebard/covid-tracker"
-      style={{ marginBottom: '10px', bottom: 0, textAlign: 'center', width: '100%' }}
-    >
-      View the Code
-    </a>
+    <div style={{ marginTop: '50px', textAlign: 'center' }}>
+      <a href="https://github.com/trevordebard/covid-tracker">View the Code</a>
+    </div>
   </>
 );
