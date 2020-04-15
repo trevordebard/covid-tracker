@@ -46,11 +46,7 @@ export default class State {
     }
     let blnDataHasChanged = null;
     if (this.data) {
-      try {
-        blnDataHasChanged = await this.hasDataChanged(this.data);
-      } catch (e) {
-        console.log('Unable to determine if data has changed')
-      }
+      blnDataHasChanged = await this.hasDataChanged(this.data).catch(() => (blnDataHasChanged = null));
     }
     if (blnDataHasChanged) {
       this.insertNewData(this.data);
@@ -63,7 +59,6 @@ export default class State {
   async hasDataChanged({ totalCases, totalTests, deaths, hospitalizations }) {
     console.log('Checking if data has changed.');
     const latestEntry = await getLatestEntry(this.state);
-
     // intentionally using == because we want null and undefined comparisons to return true
     if (
       totalCases == latestEntry.totalCases &&
@@ -77,12 +72,18 @@ export default class State {
   }
 
   async getData() {
-    return getLatestEntry(this.state);
+    try {
+      return await getLatestEntry(this.state);
+    } catch (err) {
+      console.log('Unable to get latest entry');
+      throw err;
+    }
   }
 
   insertNewData({ totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations }) {
-    console.log('Inserting new data');
-    addData(this.state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations);
+    addData(this.state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations).catch(() =>
+      console.log('Failed to insert data')
+    );
   }
 
   static async getHTML(url) {

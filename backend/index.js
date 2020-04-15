@@ -45,17 +45,32 @@ app.get('/api/history', async (req, res) => {
     res.status(500).send('Error getting history');
   }
 });
-app.get('/api/AR', (req, res, next) => {
+app.get('/api/AR', async (req, res, next) => {
   const AR = new Arkansas();
-  AR.getData().then(r => res.json(r));
+  try {
+    const data = await AR.getData();
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).send('Error retrieving data');
+  }
 });
-app.get('/api/LA', (req, res, next) => {
+app.get('/api/LA', async (req, res, next) => {
   const LA = new Louisiana();
-  LA.getData().then(r => res.json(r));
+  try {
+    const data = await LA.getData();
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).send('Error retrieving data');
+  }
 });
-app.get('/api/TX', (req, res, next) => {
+app.get('/api/TX', async (req, res, next) => {
   const TX = new Texas();
-  TX.getData().then(r => res.json(r));
+  try {
+    const data = await TX.getData();
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).send('Error retrieving data');
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
