@@ -5,7 +5,7 @@ import scrapeTX from '../states/scrapeTX';
 
 const urls = {
   AR: 'https://adem.maps.arcgis.com/apps/opsdashboard/index.html#/f533ac8a8b6040e5896b05b47b17a647',
-  LA: 'ttps://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776',
+  LA: 'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776',
   TX: 'https://txdshs.maps.arcgis.com/apps/opsdashboard/index.html#/ed483ecd702b4298ab01e8b9cafc8b83',
 };
 export default context => {
