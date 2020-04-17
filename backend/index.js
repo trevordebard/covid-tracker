@@ -2,11 +2,9 @@ import './utils/config';
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import Arkansas from './states/Arkansas';
 import { scheduleCron } from './utils/cron';
-import Louisiana from './states/Louisiana';
-import Texas from './states/Texas';
 import { getLatestEntry, getHistory } from './utils/db';
+import State from './State';
 
 // TODO: Entire app needs to handle promises and errors significantly better than it currently is
 if (process.env.RUN_CRON) {
@@ -46,7 +44,7 @@ app.get('/api/history', async (req, res) => {
   }
 });
 app.get('/api/AR', async (req, res, next) => {
-  const AR = new Arkansas();
+  const AR = State('AR');
   try {
     const data = await AR.getData();
     return res.json(data);
@@ -55,7 +53,7 @@ app.get('/api/AR', async (req, res, next) => {
   }
 });
 app.get('/api/LA', async (req, res, next) => {
-  const LA = new Louisiana();
+  const LA = State('LA');
   try {
     const data = await LA.getData();
     return res.json(data);
@@ -64,7 +62,7 @@ app.get('/api/LA', async (req, res, next) => {
   }
 });
 app.get('/api/TX', async (req, res, next) => {
-  const TX = new Texas();
+  const TX = State('TX');
   try {
     const data = await TX.getData();
     return res.json(data);
@@ -81,21 +79,21 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/test', async (req, res, next) => {
     console.log('testing...');
     if (req.query.state === 'AR') {
-      const AR = new Arkansas();
+      const AR = State('AR');
       await AR.run();
     } else if (req.query.state === 'LA') {
-      const LA = new Louisiana();
+      const LA = State('LA');
       await LA.run();
     } else if (req.query.state === 'TX') {
-      const TX = new Texas();
+      const TX = State('TX');
       await TX.run();
     } else {
-      const AR = new Arkansas();
-      await AR.run();
-      const LA = new Louisiana();
-      await LA.run();
-      const TX = new Texas();
-      await TX.run();
+      const AR = State('AR');
+      AR.run();
+      const LA = State('LA');
+      LA.run();
+      const TX = State('TX');
+      TX.run();
     }
   });
   app.get('/latest', (req, res) => {
