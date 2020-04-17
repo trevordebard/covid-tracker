@@ -6,7 +6,7 @@ const Items = styled.div`
   justify-content: space-evenly;
   flex-wrap: wrap;
 `;
-const Layout = ({ children, title }) => (
+const Layout = ({ children }) => (
   <>
     <Items>{children}</Items>
   </>

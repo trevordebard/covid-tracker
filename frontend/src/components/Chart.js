@@ -7,7 +7,7 @@ export default function Chart({ state }) {
   if (!historyLoading) {
     return (
       <div style={{ marginTop: '10px' }}>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="90%" height={300}>
           <LineChart data={history}>
             <Label position="center" value="Total Cases" />
             <XAxis dataKey="recent" tickFormatter={el => el.toLocaleString()} />
@@ -17,7 +17,7 @@ export default function Chart({ state }) {
             <Line type="monotone" dataKey="totalCases" stroke="#8884d8" name="Total Cases" />
           </LineChart>
         </ResponsiveContainer>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="90%" height={300}>
           <LineChart data={history}>
             <XAxis dataKey="recent" />
             <YAxis width={55} />
