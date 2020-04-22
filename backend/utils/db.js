@@ -11,6 +11,9 @@ client.connect();
 export async function addData(state, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations) {
   console.log('Attempting to insert new data');
   console.log(state, totalCases, totalTests, totalPositive, totalNegative);
+  if (!state || !totalCases || !totalCases || !totalPositive || !totalPositive) {
+    throw new Error('Null data should not be added to database; Data will not be inserted');
+  }
   const now = new Date();
   const sql = `INSERT INTO Cases ("state", "created", "totalCases", "totalTests", "totalPositive", "totalNegative", "deaths", "hospitalizations", "lastChecked") VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
   const values = [state, now, totalCases, totalTests, totalPositive, totalNegative, deaths, hospitalizations, now];
