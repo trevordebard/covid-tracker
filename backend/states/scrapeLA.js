@@ -13,9 +13,9 @@ export default () => {
           res.totalPositive = getStringAsNum(data[i - 1].innerHTML);
         }
       }
-    } else if (data[i].innerHTML.includes('Deaths')) {
+    } else if (data[i].innerHTML.includes('Deaths Reported')) {
       if (!res.deaths) {
-        res.deaths = getStringAsNum(data[i - 1].innerHTML);
+        res.deaths = getStringAsNum(data[i + 1].innerHTML);
       }
     } else if (data[i].innerHTML.includes('Hospitals')) {
       if (!res.hospitalizations) {
@@ -27,7 +27,7 @@ export default () => {
       }
     } else if (data[i].innerHTML.includes('and Reported to State')) {
       if (!commercialTests) {
-        commercialTests = getStringAsNum(data[i + 1].innerHTML);
+        commercialTests = getStringAsNum(data[i - 1].innerHTML);
       }
     }
     i += 1;
