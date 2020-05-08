@@ -25,9 +25,9 @@ export default () => {
       if (!stateTests) {
         stateTests = getStringAsNum(data[i - 1].innerHTML);
       }
-    } else if (data[i].innerHTML.includes('and Reported to State')) {
+    } else if (data[i].innerHTML.includes('Commercial')) {
       if (!commercialTests) {
-        commercialTests = getStringAsNum(data[i - 1].innerHTML);
+        commercialTests = getStringAsNum(data[i + 1].innerHTML);
       }
     }
     i += 1;
