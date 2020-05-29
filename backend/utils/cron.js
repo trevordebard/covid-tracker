@@ -10,8 +10,23 @@ export function scheduleCron() {
     const AR = State('AR');
     const LA = State('LA');
     const TX = State('TX');
-    AR.run();
-    LA.run();
-    TX.run();
+    try {
+      await AR.run();
+    } catch (e) {
+      console.error('AR Failed');
+      console.error(e);
+    }
+    try {
+      try {
+        await LA.run();
+      } catch (e) {
+        console.error('LA Failed');
+        console.error(e);
+      }
+      await TX.run();
+    } catch (e) {
+      console.error('TX Failed');
+      console.error(e);
+    }
   });
 }

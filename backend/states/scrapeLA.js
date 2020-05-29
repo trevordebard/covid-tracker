@@ -15,7 +15,7 @@ export default () => {
       }
     } else if (data[i].innerHTML.includes('Deaths Reported')) {
       if (!res.deaths) {
-        res.deaths = getStringAsNum(data[i + 1].innerHTML);
+        res.deaths = getStringAsNum(data[i - 1].innerHTML);
       }
     } else if (data[i].innerHTML.includes('Hospitals')) {
       if (!res.hospitalizations) {

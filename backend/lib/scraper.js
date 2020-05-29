@@ -15,7 +15,8 @@ export default context => {
     try {
       browser = await puppeteer.launch({ args: ['--no-sandbox'] });
       page = await browser.newPage();
-      await page.goto(urls[context.state], { waitUntil: 'networkidle0' });
+      console.log(context.state);
+      await page.goto(urls[context.state], { waitUntil: 'networkidle2', timeout: 65000 });
       return [page, browser];
     } catch (err) {
       console.error('There was an issue in setupPuppet');
