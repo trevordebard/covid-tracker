@@ -39,6 +39,7 @@ export default function State({ state }) {
     <StateContainer>
       <Stats>
         <h1>{getStateName(state)}</h1>
+        {state === 'TX' && <p style={{ color: 'red' }}>OUTDATED. UPDATES NEEDED</p>}
         <p>
           Cases: <span>{data.totalCases.toLocaleString()}</span>
         </p>
