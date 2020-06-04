@@ -5,7 +5,7 @@ import State from '../State';
 
 export function scheduleCron() {
   console.log('Scheduling cron...');
-  cron.schedule(`*/5 * * * *`, async () => {
+  cron.schedule(`*/15 * * * *`, async () => {
     console.log('Cron running');
     const AR = State('AR');
     const LA = State('LA');
