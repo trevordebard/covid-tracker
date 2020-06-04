@@ -4,7 +4,6 @@ import scrapeLA from '../states/scrapeLA';
 import scrapeTX from '../states/scrapeTX';
 
 const urls = {
-  AR: 'https://adem.maps.arcgis.com/apps/opsdashboard/index.html#/f533ac8a8b6040e5896b05b47b17a647',
   LA: 'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776',
   TX: 'https://txdshs.maps.arcgis.com/apps/opsdashboard/index.html#/ed483ecd702b4298ab01e8b9cafc8b83',
 };
@@ -29,14 +28,15 @@ export default context => {
   }
   return {
     async scrape() {
+      if (context.state === 'AR') {
+        context.data = await scrapeAR();
+        return;
+      }
       try {
         await setupPuppet();
-        // await page.waitForSelector('div > svg > g.responsive-text-label > svg > text', {
-        // timeout: 30000,
-        // });
         await page.waitForFunction(
           `document.querySelectorAll('div > svg > g.responsive-text-label > svg > text').length > 0`,
-          { timeout: 15000 }
+          { timeout: 35000 }
         );
         const func = getScrapeFunction(context.state);
         context.data = await page.evaluate(func);
