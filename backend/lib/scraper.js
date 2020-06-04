@@ -32,6 +32,10 @@ export default context => {
         context.data = await scrapeAR();
         return;
       }
+      if (context.state === 'TX') {
+        context.data = await scrapeTX();
+        return;
+      }
       try {
         await setupPuppet();
         await page.waitForFunction(

@@ -1,56 +1,22 @@
-export default () => {
-  const res = {};
-  const data = document.querySelectorAll('div > svg > g.responsive-text-label > svg > text');
-  let i = 0;
-  let stateTests = null;
-  let commercialTests = null;
-  while (i < data.length) {
-    if (data[i].innerHTML.includes('Cases Reported')) {
-      if (!data.totalCases) {
-        if (!res.totalCases) {
-          // Texas doesn't differentiate
-          res.totalCases = getStringAsNum(data[i - 1].innerHTML);
-          res.totalPositive = getStringAsNum(data[i - 1].innerHTML);
-        }
-      }
-    } else if (data[i].innerHTML.includes('Deaths')) {
-      if (!res.deaths) {
-        res.deaths = getStringAsNum(data[i - 1].innerHTML);
-      }
-    } else if (data[i].innerHTML.includes('Fatal')) {
-      if (!res.deaths) {
-        res.deaths = getStringAsNum(data[i - 1].innerHTML);
-      }
-    }
-    // Texas doesn't report this (3/29)
-    else if (data[i].innerHTML.includes('Hospital')) {
-      if (!res.hospitalizations) {
-        res.hospitalizations = getStringAsNum(data[i + 1].innerHTML);
-      }
-    } else if (data[i].innerHTML.includes('Total Tests')) {
-      if (!res.totalTests) {
-        res.totalTests = getStringAsNum(data[i - 1].innerHTML);
-      }
-    } else if (data[i].innerHTML.includes('Public Lab')) {
-      if (!stateTests) {
-        stateTests = getStringAsNum(data[i - 1].innerHTML);
-      }
-    } else if (data[i].innerHTML.includes('Private Lab')) {
-      if (!commercialTests) {
-        commercialTests = getStringAsNum(data[i - 1].innerHTML);
-      }
-    }
-    i += 1;
-  }
-  res.totalTests = commercialTests + stateTests;
-  res.totalNegative = res.totalTests - res.totalPositive;
+import axios from 'axios';
 
-  // This is running in headless browser, so function needs
-  // to be defined here
-  function getStringAsNum(num) {
-    // Remove commas
-    const val = num.replace(',', '');
-    return parseInt(val, 10);
-  }
+const totalTestsUrl =
+  'https://services5.arcgis.com/ACaLB9ifngzawspq/arcgis/rest/services/DSHS_COVID19_Testing_Service/FeatureServer/2/query?f=json&where=TestType%3D%27ViralTests%27&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22Count_%22%2C%22outStatisticFieldName%22%3A%22value%22%7D%5D&resultType=standard&cacheHint=true //Viral tests';
+const totalCasesUrl =
+  'https://services5.arcgis.com/ACaLB9ifngzawspq/arcgis/rest/services/DSHS_COVID19_Cases_Service/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22Positive%22%2C%22outStatisticFieldName%22%3A%22value%22%7D%5D&outSR=102100&resultType=standard&cacheHint=true';
+const deathsUrl =
+  'https://services5.arcgis.com/ACaLB9ifngzawspq/arcgis/rest/services/DSHS_COVID19_Cases_Service/FeatureServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&outStatistics=%5B%7B%22statisticType%22%3A%22sum%22%2C%22onStatisticField%22%3A%22Fatalities%22%2C%22outStatisticFieldName%22%3A%22value%22%7D%5D&outSR=102100&resultType=standard&cacheHint=true';
+
+export default async () => {
+  const res = {};
+  const totalTests = await axios.get(totalTestsUrl);
+  const totalCases = await axios.get(totalCasesUrl);
+  const totalDeaths = await axios.get(deathsUrl);
+
+  res.totalTests = totalTests.data.features[0].attributes.value || 1;
+  res.totalDeaths = totalDeaths.data.features[0].attributes.value || 1;
+  res.totalCases = totalCases.data.features[0].attributes.value || 1;
+  res.totalPositive = totalCases.data.features[0].attributes.value || 1;
+  console.log(res);
   return res;
 };
