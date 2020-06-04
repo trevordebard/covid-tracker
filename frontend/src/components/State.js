@@ -38,7 +38,9 @@ export default function State({ state }) {
   return (
     <StateContainer>
       <Stats>
-        <h1>{getStateName(state)}</h1>
+        <a target="_blank" href={getStateLink(state)}>
+          <h1>{getStateName(state)}</h1>
+        </a>
         <p>
           Cases: <span>{data.totalCases.toLocaleString()}</span>
         </p>
@@ -60,7 +62,7 @@ export default function State({ state }) {
       </Stats>
       <div>
         <Chart state={state} />
-        {state === 'TX' && <TimeStat>Testing data is not 100% accurate for middle to end of May</TimeStat>}
+        {state === 'TX' && <TimeStat>Testing data is not 100% accurate for ~May 13-21</TimeStat>}
       </div>
     </StateContainer>
   );
@@ -77,4 +79,16 @@ function getStateName(state) {
     return 'Texas';
   }
   return 'State Unknown';
+}
+
+function getStateLink(state) {
+  if(state==='LA') {
+    return 'https://www.arcgis.com/apps/opsdashboard/index.html#/69b726e2b82e408f89c3a54f96e8f776'
+  }
+  if(state==='AR') {
+    return 'https://experience.arcgis.com/experience/c2ef4a4fcbe5458fbf2e48a21e4fece9'
+  }
+  if(state==='TX') {
+    return 'https://txdshs.maps.arcgis.com/apps/opsdashboard/index.html#/ed483ecd702b4298ab01e8b9cafc8b83'
+  }
 }
